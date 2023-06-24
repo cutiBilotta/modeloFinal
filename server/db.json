@@ -1,0 +1,52 @@
+{
+  "anuncios": [
+    {
+      "id": 1,
+      "nombre": "Bruce",
+      "fuerza": 100,
+      "alias": "Hulk",
+      "editorial": "Marvel",
+      "arma": "Escudo"
+    },
+    {
+      "id": 6,
+      "nombre": "Clark Kent",
+      "fuerza": 79,
+      "alias": "Superman",
+      "editorial": "DC",
+      "arma": "Martillo"
+    },
+    {
+      "id": 7,
+      "nombre": "Peter Parker",
+      "fuerza": 32,
+      "alias": "Spiderman",
+      "editorial": "DC",
+      "arma": "Escudo"
+    },
+    {
+      "id": 8,
+      "nombre": "Tony",
+      "fuerza": 66,
+      "alias": "IronMan",
+      "editorial": "DC",
+      "arma": "Arma de Fuego"
+    },
+    {
+      "id": 9,
+      "nombre": "Chris",
+      "fuerza": 69,
+      "alias": "Capitan America",
+      "editorial": "Marvel",
+      "arma": "Escudo"
+    },
+    {
+      "id": 10,
+      "nombre": "Brian",
+      "fuerza": 97,
+      "alias": "Thor",
+      "editorial": "Marvel",
+      "arma": "Martillo"
+    }
+  ]
+}
