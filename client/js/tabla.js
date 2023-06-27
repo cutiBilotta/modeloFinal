@@ -24,7 +24,7 @@ export const crearTabla = (elemento) => {
 
 const crearCabecera = (elemento) => {
   const tHead = document.createElement("thead");
-  tHead.classList.add("table-danger");
+  tHead.classList.add("table-light");
 
   const headRow = document.createElement("tr");
 

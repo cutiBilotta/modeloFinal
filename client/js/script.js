@@ -3,9 +3,10 @@ import { Superheroe } from "./Superheroe.js";
 import { crearTabla } from "./tabla.js";
 import { validarCadenaCantCaracteres} from "./validaciones.js";
 const URL= "http://localhost:3000/anuncios";
+const URLarmas= "http://localhost:3000/armas";
 
 const $divTabla = document.getElementById("divTabla");
-const $btnPrecio = document.getElementById("btnPrecio");
+const $btnFuerza = document.getElementById("btnFuerza");
 const $btnAlfabet = document.getElementById("btnAlfabet");
 const $btnDelete = document.getElementById("btnDelete");
 const $btnEnviar= document.getElementById("btnEnviar");
@@ -17,43 +18,21 @@ const $btnCancelar = document.getElementById("btnCancelar");
 const $chkFuerza= document.getElementById("chkFuerza");
 const $chkEditorial= document.getElementById("chkEditorial");
 const $chkArma= document.getElementById("chkArma");
-
-const $btnMostrar= document.getElementById("btnMostrar");
+const $chkNombre= document.getElementById("chkNombre");
+const $chkAlias= document.getElementById("chkAlias");
+const $chkId= document.getElementById("chkId");
 
 const $formulario= document.forms[0];
 const $selectEditorial = document.getElementById("selectEditorial")
-//$divTabla.style.visibility='hidden';
 
-const $armas = ["Armadura", "Espada" , "Martillo" , "Escudo" , "Arma de Fuego", "Flechas"]
-localStorage.setItem("armas", JSON.stringify(["Armadura", "Espada", "Martillo", "Escudo", "Arma de Fuego", "Flechas"]));
-let $anuncios = getAnuncios();
-//console.log($anuncios);
-
-let $elementoSeleccionado;
-cargarArmas();
+let anuncios;
+getAnuncios();
+getArmas();
 $btnDelete.style.visibility='hidden';
 $btnCancelar.style.visibility='hidden';
+let elementoSeleccionado;
 
 const icono = "<i class='fa-solid fa-floppy-disk fa-xl'></i> Enviar";
-
-
-/*if($anuncios.length>0){
-    
-    setTimeout(()=>{
-        actualizarTabla($anuncios);
-        $spinner.style.visibility= 'hidden';
-
-    }, 2000);
-
-   
-}else
-{
-    setTimeout(() => {
-        $spinner.style.visibility= 'hidden';
-        //$divTabla.insertAdjacentHTML("afterbegin", `<p>Aun no hay anuncios de Superheroes para mostrar</p>`);
-    }, 2000);
-}*/
-
 
 window.addEventListener("click" , (e)=>{
 
@@ -62,28 +41,25 @@ window.addEventListener("click" , (e)=>{
 
         let fila = e.target.parentNode; // Obtener la fila que contiene la celda
         let index= fila.rowIndex;
-        console.log(index);
-      
-        $btnEnviar.innerHTML = "Modificar";       
-        $elementoSeleccionado= $anuncios[index-1];
 
-        cargarFormulario($elementoSeleccionado);
+
+        $btnEnviar.innerHTML = "Modificar";       
+        elementoSeleccionado= anuncios[index-1];
+        cargarFormulario(elementoSeleccionado);
         $btnDelete.style.visibility='visible';
         $btnCancelar.style.visibility='visible';
-
         $tituloAlta.textContent= "Eliminar/Modificar un Superheroe"
     }else if(e.target.matches("#btnDelete")){
-        deleteElemento($elementoSeleccionado.id);
+        deleteElemento(elementoSeleccionado.id);
         $formulario.reset();
     }
     
 
 });
 
-function cargarArmas(){
+function cargarArmas($armas){
 
     const $selectArmas = document.getElementById("selectArmas");
-    const $armas = JSON.parse(localStorage.getItem("armas")) || [];
     const $fragment = document.createDocumentFragment();
 
     $armas.forEach((elemento) =>{
@@ -138,8 +114,6 @@ $formulario.addEventListener("submit", (e) =>{
 });
 
 function cargarFormulario(a){
-    let index=0;
-
     const {txtId, txtNombre, txtAlias, rngFuerza, rdoEditorial, selectArmas}  = $formulario; //esto es destructuring
     
     txtNombre.value=a.nombre;
@@ -151,9 +125,9 @@ function cargarFormulario(a){
 }
 
 
-$btnPrecio.addEventListener('click', () =>{
+$btnFuerza.addEventListener('click', () =>{
 
-    const $tablaOrdenada= $anuncios.sort((a,b) => {
+    const $tablaOrdenada= anuncios.sort((a,b) => {
         return a.fuerza-b.fuerza;
     });
 
@@ -162,8 +136,8 @@ $btnPrecio.addEventListener('click', () =>{
 
 $btnAlfabet.addEventListener('click', () =>{
 
-    const $tablaOrdenada= $anuncios.sort((a,b) => {
-        return(b.nombre>a.nombre) ? -1 :1;
+    const $tablaOrdenada= anuncios.sort((a,b) => {
+        return(b.nombre>a.nombre) ? -1 : 1;
     });
 
     actualizarTabla($tablaOrdenada);
@@ -183,130 +157,121 @@ $btnCancelar.addEventListener('click', () =>{
 
 $btnFiltrar.addEventListener('click', () =>{
     
-    let opcion;
     let $tablaFiltrada;
     let $tablaFinal;
     
     if($selectEditorial.value == "DC"){
-        $tablaFiltrada= $anuncios.filter( a => a.editorial=="DC"? true: false)
+        $tablaFiltrada= anuncios.filter( a => a.editorial=="DC"? true: false)
         console.log("ACA DC");
         console.log($tablaFiltrada);
 
     }else if($selectEditorial.value == "MARVEL"){
-        $tablaFiltrada= $anuncios.filter( a => a.editorial=="Marvel"? true: false)
+        $tablaFiltrada= anuncios.filter( a => a.editorial=="Marvel"? true: false)
 
     }else if($selectEditorial.value == "TODOS"){
-        $tablaFiltrada= $anuncios;
+        $tablaFiltrada= anuncios;
 
     }
-
-
-    if($chkEditorial.checked && !$chkFuerza.checked && !$chkArma.checked){
-        opcion = 1;
-    }else if($chkEditorial.checked && $chkFuerza.checked && !$chkArma.checked){
-        opcion=2;
-    }else if($chkEditorial.checked && $chkFuerza.checked && $chkArma.checked){
-        opcion = 3;
-    }else if(!$chkEditorial.checked && !$chkFuerza.checked && !$chkArma.checked){
-        opcion = 4;
-    }else if(!$chkEditorial.checked && $chkFuerza.checked && !$chkArma.checked){
-        opcion = 5;
-    }else if(!$chkEditorial.checked && !$chkFuerza.checked && $chkArma.checked){
-        opcion = 6;
-    }else if($chkEditorial.checked && !$chkFuerza.checked && $chkArma.checked){
-        opcion = 7;
-    }
-    else if(!$chkEditorial.checked && $chkFuerza.checked && $chkArma.checked){
-        opcion = 8;
-    }
-
-
-    switch(opcion){
-        case 1:
-            $tablaFinal= $tablaFiltrada.map( a => ({alias:a.alias,editorial:a.editorial}));
-            break;
-        case 2:
-            $tablaFinal= $tablaFiltrada.map( a => ({alias:a.alias,editorial:a.editorial, fuerza:a.fuerza}));
-            break;
-        case 3:
-            $tablaFinal= $tablaFiltrada.map( a => ({alias:a.alias,editorial:a.editorial, fuerza:a.fuerza, arma:a.arma}));
-            break;
-        case 4:
-            $tablaFinal= $tablaFiltrada.map( a => ({ alias:a.alias,nombre:a.nombre, alias:a.alias}));
-            break;
-        case 5:
-            $tablaFinal= $tablaFiltrada.map( a => ({alias:a.alias,fuerza:a.fuerza}));
-            break;
-        case 6:
-            $tablaFinal= $tablaFiltrada.map( a => ({alias:a.alias,arma:a.arma}));
-            break;
-        case 7:
-            $tablaFinal= $tablaFiltrada.map( a => ({alias:a.alias,editorial:a.editorial, arma:a.arma}));
-            break;
-        case 8:
-            $tablaFinal= $tablaFiltrada.map( a => ({alias:a.alias,fuerza:a.fuerza, arma:a.arma}));
-            break;
-
-    }
-     
-
    
-        const $pPromedio = document.getElementById("pPromedio")
-        let total= $tablaFiltrada.reduce((anterior, actual) =>anterior + actual.fuerza,0);
-            let promedio = total/ $tablaFiltrada.length;
-    
-            $pPromedio.classList.add("text-info", "bg-success")
-            $pPromedio.innerHTML= 'Promedio total de fuerzas: ' + promedio.toFixed(2);
-    
-        
-     
-     
+   /* if($chkEditorial.checked && !$chkFuerza.checked && !$chkArma.checked &&  !$chkNombre.checked){
+        $tablaFinal= $tablaFiltrada.map( a => ({alias:a.alias,editorial:a.editorial}));
+    }else if($chkEditorial.checked && $chkFuerza.checked && !$chkArma.checked &&  !$chkNombre.checked){
+        $tablaFinal= $tablaFiltrada.map( a => ({alias:a.alias,editorial:a.editorial, fuerza:a.fuerza}));
+    }else if($chkEditorial.checked && $chkFuerza.checked && $chkArma.checked &&  !$chkNombre.checked){
+        $tablaFinal= $tablaFiltrada.map( a => ({alias:a.alias,editorial:a.editorial, fuerza:a.fuerza, arma:a.arma}));
+    }else if(!$chkEditorial.checked && !$chkFuerza.checked && !$chkArma.checked &&  !$chkNombre.checked){
+        $tablaFinal= $tablaFiltrada.map( a => ({ alias:a.alias,nombre:a.nombre, alias:a.alias}));
+    }else if(!$chkEditorial.checked && $chkFuerza.checked && !$chkArma.checked &&  !$chkNombre.checked){
+        $tablaFinal= $tablaFiltrada.map( a => ({alias:a.alias,fuerza:a.fuerza}));
+    }else if(!$chkEditorial.checked && !$chkFuerza.checked && $chkArma.checked &&  !$chkNombre.checked){
+        $tablaFinal= $tablaFiltrada.map( a => ({alias:a.alias,arma:a.arma}));
+    }else if($chkEditorial.checked && !$chkFuerza.checked && $chkArma.checked &&  !$chkNombre.checked){
+        $tablaFinal= $tablaFiltrada.map( a => ({alias:a.alias,editorial:a.editorial, arma:a.arma}));
+    }else if(!$chkEditorial.checked && $chkFuerza.checked && $chkArma.checked &&  !$chkNombre.checked){
+        $tablaFinal= $tablaFiltrada.map( a => ({alias:a.alias,fuerza:a.fuerza, arma:a.arma}));
+    }else if(!$chkEditorial.checked && !$chkFuerza.checked && !$chkArma.checked &&  $chkNombre.checked){
+        $tablaFinal= $tablaFiltrada.map( a => ({alias:a.alias, nombre:a.nombre}));
+    }else if(!$chkEditorial.checked && !$chkFuerza.checked && $chkArma.checked &&  $chkNombre.checked){
+        $tablaFinal= $tablaFiltrada.map( a => ({alias:a.alias,nombre:a.nombre,arma:a.arma}));
+    }else if(!$chkEditorial.checked && $chkFuerza.checked && $chkArma.checked &&  $chkNombre.checked){
+        $tablaFinal= $tablaFiltrada.map( a => ({alias:a.alias,fuerza:a.fuerza,arma:a.arma,nombre:a.nombre}));
+    }else if(!$chkEditorial.checked && $chkFuerza.checked && !$chkArma.checked &&  $chkNombre.checked){
+        $tablaFinal= $tablaFiltrada.map( a => ({alias:a.alias,nombre:a.nombre,fuerza:a.fuerza}));
+    }else if($chkEditorial.checked && !$chkFuerza.checked && !$chkArma.checked &&  $chkNombre.checked){
+        $tablaFinal= $tablaFiltrada.map( a => ({alias:a.alias,nombre:a.nombre,editorial:a.editorial}));
+    }else if($chkEditorial.checked && $chkFuerza.checked && !$chkArma.checked &&  $chkNombre.checked){
+        $tablaFinal= $tablaFiltrada.map( a => ({alias:a.alias,nombre:a.nombre,fuerza:a.fuerza,editorial:a.editorial}));
+    }*/
 
+    const properties = {
+        id: $chkId.checked,
+        alias: $chkAlias.checked,
+        editorial: $chkEditorial.checked,
+        fuerza: $chkFuerza.checked,
+        arma: $chkArma.checked,
+        nombre: $chkNombre.checked
+      };
+      
+      $tablaFinal = $tablaFiltrada.map(a => {
+        const filteredProps = {};
+      
+        for (const prop in properties) {
+          if (properties[prop]) {
+            filteredProps[prop] = a[prop];
+          }
+        }
+        return filteredProps;
+    });
 
+    const sinSeleccion = Object.values(properties).every(value => value === false);
+    if(sinSeleccion){
+        $tablaFinal=anuncios;
+    }
+   
+    const $pPromedio = document.getElementById("pPromedio")
+    let total= $tablaFiltrada.reduce((anterior, actual) =>anterior + actual.fuerza,0);
+    let promedio = total/ $tablaFiltrada.length;
+
+    $pPromedio.classList.add("text-info", "bg-success")
+    $pPromedio.innerHTML= 'Promedio total de fuerzas: ' + promedio.toFixed(2);
+
+    $chkAlias.checked=false;
     $chkArma.checked=false;
     $chkFuerza.checked=false;
     $chkEditorial.checked=false;
+    $chkNombre.checked=false;
+
     actualizarTabla($tablaFinal);  
-});
-
-
-document.querySelectorAll('.e-botones').forEach(button => {
-    button.addEventListener('click', ()=>{
-        $spinner.style.visibility='visible';
-        $divTabla.style.visibility='hidden';
-
-        if($anuncios.length>0){
-    
-            setTimeout(()=>{
-                $divTabla.style.visibility='visible';
-                $spinner.style.visibility= 'hidden';
-        
-            }, 2000);
-        
-           
-        }else
-        {
-            setTimeout(() => {
-                $divTabla.style.visibility='visible';
-
-                $spinner.style.visibility= 'hidden';
-                //$divTabla.insertAdjacentHTML("afterbegin", `<p>Aun no hay anuncios de Superheroes para mostrar</p>`);
-            }, 2000);
-        }
-    });
 });
 
 
 function getAnuncios(){
     $spinner.style.visibility='visible';
+    $divTabla.style.visibility='hidden';
+
 
     fetch(URL)
     .then((res)=> res.ok?res.json():Promise.reject(res))
     .then((data)=>{
-        $anuncios=data;
-        actualizarTabla($anuncios);
+        actualizarTabla(data);
         $spinner.style.visibility='hidden';
+        $divTabla.style.visibility='visible';
 
+        anuncios= data;
+    })
+    .catch((err)=>{
+
+        console.error(`Error: ${err.status} - ${err.statusText}`)
+    })
+
+};
+
+function getArmas(){
+
+    fetch(URLarmas)
+    .then((res)=> res.ok?res.json():Promise.reject(res))
+    .then((data)=>{
+        cargarArmas(data);
 
     })
     .catch((err)=>{
@@ -319,6 +284,8 @@ function getAnuncios(){
 
 function createElemento(data){
     $spinner.style.visibility='visible';
+    $divTabla.style.visibility='hidden';
+
 
     fetch(URL,{
             method:"Post",
@@ -330,6 +297,8 @@ function createElemento(data){
         console.log(data);
         actualizarTabla(data);
         $spinner.style.visibility='hidden';
+        $divTabla.style.visibility='visible';
+
 
     })
     .catch((err)=>{
@@ -338,37 +307,57 @@ function createElemento(data){
 };
     
 function deleteElemento(id){
-    
+    $spinner.style.visibility='visible';
+    $divTabla.style.visibility='hidden';
+
     fetch(URL+"/"+ id,{
-        method: "DELETE"
+        method: "DELETE",
     })
-    .then((res)=>{
-        if(!res.ok) return Promise.reject(res);
-        actualizarTabla(data);
-    })
+    .then((res)=> res.ok ? res.json() : Promise.reject(res))
+    .then((data) =>{
+        anuncios=data;
+        $divTabla.appendChild(crearTabla(data))})
     .catch((err)=>{
 
         console.error(`Error: ${err.status} - ${err.statusText}`)
+
     })
-};
+    .finally(()=>{
+       
+        $spinner.style.visibility='hidden';
+        $divTabla.style.visibility='visible';
+
+    })
+
+}
 
 function updateElemento(data){
     $spinner.style.visibility='visible';
-
-    fetch(URL + "/" + data.id,{
+    $divTabla.style.visibility='hidden';
+    
+    fetch(URL+"/"+ data.id,{
             method:"Put",
             headers:{"Content-Type" : "application/json;charset=utf-8"},
             body: JSON.stringify(data),
         })
+
     .then((res)=> res.ok?res.json():Promise.reject(res))
     .then((data)=>{
-        console.log(data);
-        actualizarTabla(data);
-        $spinner.style.visibility='hidden';
-
+        console.log("entre por el then");
+        $divTabla.appendChild(crearTabla(data))
     })
     .catch((err)=>{
 
         console.error(`Error: ${err.status} - ${err.statusText}`)
-    })  
+        console.log("entre por el then");
+
+
+    })
+    .finally(()=>{
+        
+        $spinner.style.visibility='hidden';
+        $divTabla.style.visibility='visible';
+
+
+    })
 };
