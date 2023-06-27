@@ -82,7 +82,7 @@ function actualizarTabla(data){
     }
 
     if(data != null){
-          $divTabla.appendChild(crearTabla(data));
+        $divTabla.appendChild(crearTabla(data));
     }
 }
 
@@ -256,11 +256,9 @@ function getAnuncios(){
         actualizarTabla(data);
         $spinner.style.visibility='hidden';
         $divTabla.style.visibility='visible';
-
         anuncios= data;
     })
     .catch((err)=>{
-
         console.error(`Error: ${err.status} - ${err.statusText}`)
     })
 
@@ -272,11 +270,16 @@ function getArmas(){
     .then((res)=> res.ok?res.json():Promise.reject(res))
     .then((data)=>{
         cargarArmas(data);
-
     })
     .catch((err)=>{
 
         console.error(`Error: ${err.status} - ${err.statusText}`)
+    })
+    .finally(()=>{
+       
+        $spinner.style.visibility='hidden';
+        $divTabla.style.visibility='visible';
+
     })
 
 };
@@ -285,8 +288,6 @@ function getArmas(){
 function createElemento(data){
     $spinner.style.visibility='visible';
     $divTabla.style.visibility='hidden';
-
-
     fetch(URL,{
             method:"Post",
             headers:{"Content-Type" : "application/json;charset=utf-8"},
@@ -294,15 +295,17 @@ function createElemento(data){
         })
     .then((res)=> res.ok?res.json():Promise.reject(res))
     .then((data)=>{
-        console.log(data);
-        actualizarTabla(data);
-        $spinner.style.visibility='hidden';
-        $divTabla.style.visibility='visible';
-
-
+        anuncios=data;
     })
     .catch((err)=>{
         console.error(`Error: ${err.status} - ${err.statusText}`)
+
+    })
+     .finally(()=>{
+       
+        $spinner.style.visibility='hidden';
+        $divTabla.style.visibility='visible';
+
     })
 };
     
@@ -316,11 +319,9 @@ function deleteElemento(id){
     .then((res)=> res.ok ? res.json() : Promise.reject(res))
     .then((data) =>{
         anuncios=data;
-        $divTabla.appendChild(crearTabla(data))})
+    })
     .catch((err)=>{
-
         console.error(`Error: ${err.status} - ${err.statusText}`)
-
     })
     .finally(()=>{
        
@@ -343,21 +344,13 @@ function updateElemento(data){
 
     .then((res)=> res.ok?res.json():Promise.reject(res))
     .then((data)=>{
-        console.log("entre por el then");
-        $divTabla.appendChild(crearTabla(data))
+        anuncios=data;
     })
     .catch((err)=>{
-
         console.error(`Error: ${err.status} - ${err.statusText}`)
-        console.log("entre por el then");
-
-
     })
     .finally(()=>{
-        
         $spinner.style.visibility='hidden';
         $divTabla.style.visibility='visible';
-
-
     })
 };

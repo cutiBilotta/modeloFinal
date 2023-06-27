@@ -10,7 +10,6 @@ export const crearTabla = (elemento) => {
     "table-dark",
     "table-lg",
     "table-hover",
-    "table-responsive-sm"
   );
 
   const thead = document.createElement("thead");
@@ -23,8 +22,10 @@ export const crearTabla = (elemento) => {
 };
 
 const crearCabecera = (elemento) => {
+
   const tHead = document.createElement("thead");
   tHead.classList.add("table-light");
+
 
   const headRow = document.createElement("tr");
 

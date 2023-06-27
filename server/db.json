@@ -31,6 +31,38 @@
       "alias": "Hulk",
       "editorial": "Marvel",
       "arma": "Escudo"
+    },
+    {
+      "id": 11,
+      "nombre": "Ana",
+      "fuerza": 79,
+      "alias": "Wonder Woman",
+      "editorial": "DC",
+      "arma": "Espada"
+    },
+    {
+      "id": 12,
+      "nombre": "Chris",
+      "fuerza": 100,
+      "alias": "Thor",
+      "editorial": "Marvel",
+      "arma": "Martillo"
+    },
+    {
+      "id": 13,
+      "nombre": "Brian",
+      "fuerza": 62,
+      "alias": "Capitan America",
+      "editorial": "Marvel",
+      "arma": "Escudo"
+    },
+    {
+      "id": 14,
+      "nombre": "Juan",
+      "fuerza": 40,
+      "alias": "Batman",
+      "editorial": "DC",
+      "arma": "Arma de Fuego"
     }
   ],
   "armas": [
